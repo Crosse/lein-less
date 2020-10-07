@@ -1,4 +1,4 @@
-(defproject lein-less "1.7.6-SNAPSHOT"
+(defproject brsyuksel/lein-less "1.7.5-SNAPSHOT"
   :description "Less CSS compiler plugin for leiningen"
   :url "http://github.com/brsyuksel/lein-less"
   :license {:name "Eclipse Public License"
