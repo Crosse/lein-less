@@ -5,7 +5,6 @@
             [leiningen.less.engine :as engine]
             [leiningen.less.nio :as nio]))
 
-
 (def ^:dynamic *tmp* nil)
 
 (defn with-tmp-dir [test]
@@ -20,9 +19,7 @@
       (initialise)
       (test))))
 
-
 (use-fixtures :each (comp (fn run [f] (f)) with-tmp-dir with-engine))
-
 
 (deftest test-compile-simple
   (let [input (nio/resolve *tmp* "simple-test.less")
@@ -36,9 +33,7 @@
     (is (= 0 (-> (compile-resource input output) .asInt)))
 
     (when (is (nio/exists? output))
-      (is (= "a b {\n  c: d;\n}\n" (slurp output))))
-    ))
-
+      (is (= "a b {\n  c: d;\n}\n" (slurp output))))))
 
 (deftest test-compile-error
   (let [input (nio/resolve *tmp* "error-test.less")
@@ -52,5 +47,4 @@
     (is (thrown-with-msg? LessError #"^ParseError: missing closing `}`"
                           (compile-resource input output)))
 
-    (is (not (nio/exists? output)))
-    ))
+    (is (not (nio/exists? output)))))
