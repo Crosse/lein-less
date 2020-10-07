@@ -1,36 +1,32 @@
 (ns leiningen.less.engine
   (:require [clojure.java.io :as jio])
-  (:import (javax.script ScriptEngineManager ScriptEngine ScriptContext Bindings ScriptException)
-           (java.nio.file Path)
+  (:import (java.nio.file Path)
            (java.io File Reader)
            (leiningen.less LessError)
-           (java.util Map)))
+           (java.util Map)
+           (org.graalvm.polyglot Context)))
 
 
-(def ^:private ^ScriptEngineManager engine-manager (ScriptEngineManager.))
 
-
-(def ^:dynamic ^:private ^ScriptEngine *engine* nil)
+(def ^:dynamic ^:private *engine* nil)
 
 
 (defn create-engine
-  "Create a new script engine for the specified name. E.g. rhino, nashorn."
-  ([] (create-engine "javascript"))
-  ([^String engine-type]
-   (.getEngineByName engine-manager engine-type)))
+  []
+  (-> (Context/newBuilder (into-array ["js"]))
+      (.allowAllAccess true)
+      (.build)))
 
 
-(defn with-engine* [engine-param body-fn]
-  (let [engine (if (string? engine-param) (create-engine engine-param) engine-param)]
-    (when-not (instance? ScriptEngine engine)
-      (throw (IllegalArgumentException. (str "Invalid javascript engine (" engine-param ")"))))
+(defn with-engine* [body-fn]
+  (let [engine (create-engine)]
     (binding [*engine* engine]
       (body-fn))))
 
 (defmacro with-engine
   "Run the specified body expressions on the provided javascript engine."
-  [engine & body]
-  `(with-engine* ~engine (fn [] ~@body)))
+  [& body]
+  `(with-engine* (fn [] ~@body)))
 
 
 (defmacro ^:private check-engine []
@@ -64,43 +60,23 @@
   [error message]
   (let [cause (when (throwable? error) (.getCause ^Throwable error))]
     (cond
-      (not (throwable? error))
-      (throw (LessError. (str message) nil))
+      (not (throwable? error)) (throw (LessError. (str message) nil))
 
-      (instance? LessError error)
-      (throw error)
+      (instance? LessError error) (throw error)
 
-      (instance? ScriptException error)
-      (if cause (recur cause message)
-                (throw (LessError. (str message) error)))
-
-      (or (dynamic-instance? "jdk.nashorn.api.scripting.NashornException" error)
-          (dynamic-instance? "sun.org.mozilla.javascript.internal.JavaScriptException" error))
-      (throw (LessError. (str message) error))
-
-      (or (dynamic-instance? "org.mozilla.javascript.WrappedException" error)
-          (dynamic-instance? "sun.org.mozilla.javascript.internal.WrappedException" error))
-      (recur (.getWrappedException error) message)
+      (dynamic-instance? "org.graalvm.polyglot.PolyglotException" error) (throw (LessError. (str message) error))
 
       :default (throw error)
       )))
 
 
 (defn eval!
-  "Evaluate the specified string or resource. Must be called from within a `(with-engine ..)` expression."
-  ([^String js-expression]
+  ([js-expression]
    (check-engine)
    (try
-     (.eval *engine* js-expression)
+     (.eval *engine* "js" js-expression)
      (catch Exception ex
-            (error! ex (.getMessage ex)))))
-  ([resource ^String resource-name]
-   (check-engine)
-   (let [^Reader reader (jio/reader resource)
-         ^Bindings bindings (.getBindings *engine* ScriptContext/ENGINE_SCOPE)]
-     (try
-       (when resource-name (.put bindings ScriptEngine/FILENAME (str resource-name)))
-       (.eval *engine* reader)
-       (catch Exception ex
-              (error! ex (.getMessage ex)))
-       (finally (.remove bindings ScriptEngine/FILENAME))))))
+       (error! ex (.getMessage ex)))))
+  ([resource & params]
+   (let [content (slurp resource)]
+     (eval! content))))
