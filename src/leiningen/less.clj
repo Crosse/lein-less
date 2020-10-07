@@ -20,7 +20,7 @@
 (defn- run-compiler
   "Run the lesscss compiler."
   [project {:keys [source-paths target-path] :as config} watch?]
-  (engine/with-engine "javascript"
+  (engine/with-engine
     (compiler/initialise)
     (println "Compiling {less} css:")
     (let [units (nio/compilation-units source-paths target-path)
