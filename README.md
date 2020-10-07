@@ -1,22 +1,20 @@
-# This project is no longer maintained - please refer to the issue: [Archiving the project](https://github.com/montoux/lein-less/issues/22)
-
 # lein-less
 
 This is a Leiningen plugin that will compile Less CSS files (see [lesscss.org](http://lesscss.org)) using the `less.js` 
-compiler running on the JVM. `lein-less` is ideal for compiling Less CSS files during automated builds: compilation 
+compiler running on the GraalVM. `lein-less` is ideal for compiling Less CSS files during automated builds: compilation 
 happens as part of your regular leiningen build without requiring any tools or configuration other than your leiningen 
 project file.
 
 ## Requirements
 
-This plugin is only tested against recent versions of leiningen and clojure. Works with Java 7 or Java 8.
+This plugin is only tested against recent versions of leiningen and clojure. Works with GraalVM CE 20.0.0
 
 ## Usage
 
-To install the plugin, add `[lein-less "1.7.5"]` to your `project.clj` file:
+To install the plugin, add `[brsyuksel/lein-less "1.7.5"]` to your `project.clj` file:
 
 ```
-  :plugins [[lein-less "1.7.5"]]
+  :plugins [[brsyuksel/lein-less "1.7.5"]]
 ```
 
 The plugin will compile `.less` files found in your leiningen project's resource directories.
