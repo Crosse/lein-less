@@ -16,7 +16,7 @@
 
 (defn with-engine [test]
   (fn run-test-with-engine []
-    (engine/with-engine "javascript"
+    (engine/with-engine
       (initialise)
       (test))))
 
@@ -33,7 +33,7 @@
       (is (= content (slurp input)))
       (is (not (nio/exists? output))))
 
-    (is (= 0 (int (compile-resource input output))))
+    (is (= 0 (-> (compile-resource input output) .asInt)))
 
     (when (is (nio/exists? output))
       (is (= "a b {\n  c: d;\n}\n" (slurp output))))
