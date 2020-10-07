@@ -6,7 +6,6 @@
             [clojure.string :as string])
   (:import [java.nio.file Path]
            (java.io IOException)
-           (javax.script ScriptEngineManager ScriptEngine ScriptContext)
            (leiningen.less LessError)))
 
 
