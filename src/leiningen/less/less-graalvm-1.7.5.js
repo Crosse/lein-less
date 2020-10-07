@@ -1,7 +1,8 @@
-/* Less.js v1.7.5 RHINO | Copyright (c) 2009-2014, Alexis Sellier <self@cloudhead.net> */
+/* Less.js v1.7.5 GraalVM based on Alexis Sellier's Less.js v1.7.5 RHINO */
+/* Copyright (c) 2009-2014, Alexis Sellier <self@cloudhead.net> */
 
 //
-// Stub out `require` in rhino
+// Stub out `require`
 //
 function require(arg) {
     var split = arg.split('/');
@@ -16,7 +17,7 @@ function require(arg) {
 if (typeof(window) === 'undefined') { less = {} }
 else                                { less = window.less = {} }
 tree = less.tree = {};
-less.mode = 'rhino';
+less.mode = 'graalvm';
 
 (function() {
     less.modules = {};
@@ -414,7 +415,7 @@ less.Parser = function Parser(env) {
 
     function getDebugInfo(index, inputStream, env) {
         var filename = env.currentFileInfo.filename;
-        if(less.mode !== 'browser' && less.mode !== 'rhino') {
+        if(less.mode !== 'browser' && less.mode !== 'graalvm') {
             filename = require('path').resolve(filename);
         }
 
