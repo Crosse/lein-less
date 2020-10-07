@@ -5,6 +5,8 @@ compiler running on the GraalVM. `lein-less` is ideal for compiling Less CSS fil
 happens as part of your regular leiningen build without requiring any tools or configuration other than your leiningen 
 project file.
 
+Forked from archived [montoux/lein-less](https://github.com/montoux/lein-less)
+
 ## Requirements
 
 This plugin is only tested against recent versions of leiningen and clojure. Works with GraalVM CE 20.0.0
