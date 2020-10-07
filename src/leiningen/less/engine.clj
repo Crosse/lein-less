@@ -58,17 +58,14 @@
    Uses dynamic class resolution to avoid explicit dependencies JVM-internal classes.
    "
   [error message]
-  (let [cause (when (throwable? error) (.getCause ^Throwable error))]
-    (cond
-      (not (throwable? error)) (throw (LessError. (str message) nil))
+  (cond
+    (not (throwable? error)) (throw (LessError. (str message) nil))
 
-      (instance? LessError error) (throw error)
+    (instance? LessError error) (throw error)
 
-      (dynamic-instance? "org.graalvm.polyglot.PolyglotException" error) (throw (LessError. (str message) error))
+    (dynamic-instance? "org.graalvm.polyglot.PolyglotException" error) (throw (LessError. (str message) error))
 
-      :default (throw error)
-      )))
-
+    :default (throw error)))
 
 (defn eval!
   ([js-expression]
