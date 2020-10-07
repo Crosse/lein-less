@@ -8,11 +8,9 @@
            (java.io IOException)
            (leiningen.less LessError)))
 
-
 (def version "1.7.5")
 (def less-js (format "leiningen/less/less-graalvm-%s.js" version))
 (def lessc-js (format "leiningen/less/lessc.js"))
-
 
 (defn initialise
   "Load less compiler resources required to compile less files to css. Must be called before invoking compile."
@@ -32,7 +30,6 @@
                         (escape-string (nio/absolute src))
                         (escape-string (nio/absolute dst)))))
 
-
 (defn compile-project
   "Take a normalised project configuration and a sequence of src/dst pairs, compiles each pair."
   [project units on-error]
@@ -41,4 +38,4 @@
     (try
       (compile-resource src dst)
       (catch LessError ex
-             (on-error ex)))))
+        (on-error ex)))))

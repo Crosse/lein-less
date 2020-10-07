@@ -2,17 +2,13 @@
   (:import (leiningen.less LessError)
            (org.graalvm.polyglot Context)))
 
-
-
 (def ^:dynamic ^:private *engine* nil)
-
 
 (defn create-engine
   []
   (-> (Context/newBuilder (into-array ["js"]))
       (.allowAllAccess true)
       (.build)))
-
 
 (defn with-engine* [body-fn]
   (let [engine (create-engine)]
@@ -24,28 +20,23 @@
   [& body]
   `(with-engine* (fn [] ~@body)))
 
-
 (defmacro ^:private check-engine []
   `(when-not *engine*
      (throw (IllegalStateException. "eval! must be called from within a `(with-engine ..)` expression."))))
 
-
 (defn throwable? [e]
   (when (instance? Throwable e)
     e))
-
 
 (def ^:private get-class
   (memoize (fn [class-name]
              (try (Class/forName class-name)
                   (catch ClassNotFoundException _ nil)))))
 
-
 (defmacro dynamic-instance?
   "Given a class name, attempts a dynamic lookup of the class, and if found does an instance? test against the object."
   [class-name obj]
   `(some-> (get-class ~class-name) (instance? ~obj)))
-
 
 (defn error!
   "Conservative error handling for JS eval function:

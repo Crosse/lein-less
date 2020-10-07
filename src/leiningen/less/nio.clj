@@ -26,11 +26,9 @@
 (def watch-modifiers
   (into-array WatchEvent$Modifier [SensitivityWatchEventModifier/HIGH]))
 
-
 (defprotocol PathCoercions
   "Coerce between various 'resource-namish' things. Intended for internal use."
   (^{:tag Path} as-path [x] "Coerce argument to a path."))
-
 
 (extend-protocol PathCoercions
   nil
@@ -59,8 +57,8 @@
 (extend Path
   jio/IOFactory
   (assoc jio/default-streams-impl
-    :make-input-stream (fn [^Path p _] (Files/newInputStream p default-open-options))
-    :make-output-stream (fn [^Path p opts] (Files/newOutputStream p default-open-options))))
+         :make-input-stream (fn [^Path p _] (Files/newInputStream p default-open-options))
+         :make-output-stream (fn [^Path p opts] (Files/newOutputStream p default-open-options))))
 
 (defn fstr
   "Returns a string representing the file, relative to the project root."
@@ -95,15 +93,15 @@
   [path]
   (let [fname (.toString (.getFileName (as-path path)))]
     (boolean
-      (and fname
-           (re-find #"[.]less$" fname)))))
+     (and fname
+          (re-find #"[.]less$" fname)))))
 
 (defn private?
   "A predicate that tests whether the specified path is 'private', that is, begins with '_'."
   [path]
   (let [fname (.toString (.getFileName (as-path path)))]
     (boolean
-      (and fname (re-find #"^_" fname)))))
+     (and fname (re-find #"^_" fname)))))
 
 (defn directory?
   "Returns true iff the pathish argument specifies a file system entity that is a directory."
@@ -160,30 +158,29 @@
    (when (exists? root)
      (let [paths (atom [])]
        (Files/walkFileTree
-         (as-path root)
-         (proxy [SimpleFileVisitor] []
-           (visitFile [file attrs]
-             (if (predicate file)
-               (do (swap! paths conj file) continue)
-               continue))
-           (preVisitDirectory [dir attrs]
-             (if (predicate dir)
-               (do (swap! paths conj dir) continue)
-               skip-tree))))
+        (as-path root)
+        (proxy [SimpleFileVisitor] []
+          (visitFile [file attrs]
+            (if (predicate file)
+              (do (swap! paths conj file) continue)
+              continue))
+          (preVisitDirectory [dir attrs]
+            (if (predicate dir)
+              (do (swap! paths conj dir) continue)
+              skip-tree))))
        @paths))))
 
 (defn compilation-units [src-paths target-path]
   (let [src-paths (map as-path src-paths)
         ^Path target-path (as-path target-path)]
     (->>
-      (for [^Path src-path src-paths
-            ^Path src (remove private? (filter less? (descendents src-path)))]
-        (let [dst ^Path (.resolve target-path (.relativize src-path src))
-              [_ fname ext] (re-matches #"^(.+)[.]([^.]+)$" (.toString dst))
-              dst (.resolve (.getParent dst) (format "%s.%s" fname "css"))]
-          (when fname {:src src :dst dst})))
-      (remove empty?)
-      )))
+     (for [^Path src-path src-paths
+           ^Path src (remove private? (filter less? (descendents src-path)))]
+       (let [dst ^Path (.resolve target-path (.relativize src-path src))
+             [_ fname ext] (re-matches #"^(.+)[.]([^.]+)$" (.toString dst))
+             dst (.resolve (.getParent dst) (format "%s.%s" fname "css"))]
+         (when fname {:src src :dst dst})))
+     (remove empty?))))
 
 (defn watch-resources [project paths callback]
   (let [^WatchService watcher (.newWatchService (FileSystems/getDefault))]

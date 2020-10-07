@@ -2,13 +2,12 @@
   (:require (leiningen compile help)
             (leiningen.core.main)
             (leiningen.less
-              [compiler :as compiler]
-              [config :refer [config]]
-              [nio :as nio])
+             [compiler :as compiler]
+             [config :refer [config]]
+             [nio :as nio])
             [robert.hooke :as hooke]
             [leiningen.less.engine :as engine])
   (:import (leiningen.less LessError)))
-
 
 (defn- report-error [^LessError error]
   (binding [*out* *err*]
@@ -52,9 +51,7 @@
    (let [config (config project)]
      (case subtask
        "once" (apply once project config args)
-       "auto" (apply auto project config args)
-       )))
-  )
+       "auto" (apply auto project config args)))))
 
 (defn compile-hook [task & args]
   (apply task args)
