@@ -102,18 +102,7 @@ less.Parser.fileLoader = function (file, currentFileInfo, callback, env) {
 })();
 
 (function () {
-    var RT;
-    var type;
-
-    if ((typeof importClass) != "undefined") {
-        importClass(Packages.clojure.lang.RT);
-        RT = Packages.clojure.lang.RT;
-        type = "rhino";
-    }
-    if ((typeof Java) != "undefined" && Java.type) {
-        RT = Java.type("clojure.lang.RT");
-        type = "nashorn";
-    }
+    var RT = Java.type("clojure.lang.RT");
 
     var slurp_var = RT['var']("clojure.core", "slurp");
     lessc.read = function (filename, encoding) {
