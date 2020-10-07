@@ -1,9 +1,5 @@
 (ns leiningen.less.engine
-  (:require [clojure.java.io :as jio])
-  (:import (java.nio.file Path)
-           (java.io File Reader)
-           (leiningen.less LessError)
-           (java.util Map)
+  (:import (leiningen.less LessError)
            (org.graalvm.polyglot Context)))
 
 
