@@ -1,8 +1,11 @@
-(defproject lein-less "1.7.6"
+(defproject com.github.crosse/lein-less "1.7.6"
   :description "Less CSS compiler plugin for leiningen"
-  :url "http://github.com/brsyuksel/lein-less"
+  :url "http://github.com/Crosse/lein-less"
   :license {:name "Eclipse Public License"
             :url  "http://www.eclipse.org/legal/epl-v10.html"}
+
+  :deploy-repositories [["releases" :clojars]
+                        ["snapshots" :clojars]]
 
   :java-source-paths ["java"]
 
